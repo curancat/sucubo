@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>🌙 Vale Súcubo 🌙</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: black;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 30px;
+      color: #ff66cc;
+      text-shadow: 0 0 10px #ff66cc;
+    }
+    button {
+      background-color: #660033;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      font-size: 1.2em;
+      border-radius: 10px;
+      margin: 10px;
+      cursor: pointer;
+    }
+    video {
+      width: 90%;
+      max-width: 800px;
+      margin: 20px auto;
+      display: none;
+    }
+    .puzzle {
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🌙 Vale Súcubo 🌙</h1>
+  <p>Você está prestes a entrar em um lugar onde realidade e desejo se confundem...</p>
+  <button onclick="entrar()">Entrar no Vale</button>
+
+  <div id="escolhaDificuldade" style="display:none;">
+    <h2>Escolha sua dificuldade</h2>
+    <button onclick="iniciar()">Iniciar Jornada</button>
+  </div>
+
+  <!-- Vídeos -->
+  <video id="0" controls><source src="teste1.mp4" type="video/mp4"></video>
+  <video id="1" controls><source src="teste2.mp4" type="video/mp4"></video>
+  <video id="2" controls><source src="teste3.mp4" type="video/mp4"></video>
+  <video id="3" controls><source src="teste4.mp4" type="video/mp4"></video>
+  <video id="4" controls><source src="teste5.mp4" type="video/mp4"></video>
+  <video id="5" controls><source src="umbreonhetero.mp4" type="video/mp4"></video>
+
+  <div class="puzzle" id="puzzle">
+    <p>Digite <strong>"súcubo"</strong> para continuar:</p>
+    <input type="text" id="resposta" />
+    <button onclick="verificar()">Verificar</button>
+  </div>
+
+  <script>
+    let indice = 0;
+    const videos = ["teste1.mp4", "teste2.mp4", "teste3.mp4", "teste4.mp4", "teste5.mp4", "umbreonhetero.mp4"];
+    const historias = {
+      "teste1.mp4": "Atravessando o véu do ordinário, você se depara com uma floresta envolta em névoa rosada. O ar é doce, denso, e cada passo ecoa como se o próprio Vale sussurrasse ao seu ouvido. O chão pulsa levemente sob seus pés — como se o mundo estivesse vivo, respirando e esperando...",
+      "teste2.mp4": "Você caminha entre árvores retorcidas que sussurram seu nome. À frente, uma figura envolta em sombras e luz se revela. Ela não fala, mas seus olhos falam de desejo, dor e promessas. Você sente algo profundo se agitar dentro de si, como se a própria realidade estivesse se moldando ao seu íntimo.",
+      "teste3.mp4": "A figura começa a dançar em meio às sombras, desafiando sua sanidade. Cada movimento parece arrancar de você memórias escondidas — lembranças que você jurava ter enterrado. Ela se aproxima, e por um instante, você sente como se estivesse olhando para o reflexo da sua alma.",
+      "teste4.mp4": "As ilusões começam a ruir. Você percebe que não está sozinho. Outras presenças... outras vítimas? Ou cúmplices? O tempo se dobra, e a figura agora fala em enigmas. Você precisa resistir ou ceder ao jogo. Seu coração acelera — não por medo, mas por algo mais profundo e primal.",
+      "teste5.mp4": "Um aviso ecoa no ar: 'O próximo passo é irreversível'. A atmosfera pesa. A súcubo começa a se revelar em sua forma completa — não mais ilusão, mas essência pura. Ela não quer apenas sua atenção. Ela quer o que há de mais íntimo em você: seu desejo, sua verdade e sua entrega.",
+      "umbreonhetero.mp4": "🔥 CHEFÃO FINAL 🔥 — A batalha não é de armas, mas de vontades. Você está frente a frente com o ser que alimenta as fantasias do Vale. Ela te provoca, desafia, testa seus limites. Cada segundo do vídeo é um convite — a pergunta final ecoa: você vai resistir... ou se render?"
+    };
+
+    function entrar() {
+      document.querySelector("button").style.display = "none";
+      document.getElementById("escolhaDificuldade").style.display = "block";
+    }
+
+    function iniciar() {
+      indice = 0;
+      document.getElementById("escolhaDificuldade").style.display = "none";
+      tocarVideo();
+    }
+
+    function tocarVideo() {
+      if (indice >= videos.length) {
+        alert("Você concluiu a jornada no Vale Súcubo. Sua alma ainda pertence a você... por enquanto.");
+        return;
+      }
+
+      let nomeArquivo = videos[indice];
+      let video = document.getElementById(indice.toString());
+
+      document.querySelectorAll("video").forEach(v => v.style.display = "none");
+      document.getElementById("puzzle").style.display = "none";
+
+      alert(historias[nomeArquivo] || "Você continua avançando...");
+
+      video.style.display = "block";
+      video.play();
+      video.onended = () => {
+        document.getElementById("puzzle").style.display = "block";
+      };
+    }
+
+    function verificar() {
+      const input = document.getElementById("resposta").value.trim().toLowerCase();
+      if (input === "súcubo") {
+        indice++;
+        document.getElementById("resposta").value = "";
+        tocarVideo();
+      } else {
+        alert("Resposta incorreta. A súcubo sorri... e espera mais.");
+      }
+    }
+  </script>
+
+</body>
+</html>
