@@ -2,122 +2,328 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>🌙 Vale Súcubo 🌙</title>
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: black;
-      color: white;
+      background-color: #0d010c; /* Cor de fundo mais escura */
+      color: #f7e0fc; /* Cor do texto mais clara e suave */
       text-align: center;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh; /* Garante que o corpo ocupe a altura total da tela */
+      overflow: hidden; /* Evita barras de rolagem indesejadas */
     }
     h1 {
       margin-top: 30px;
       color: #ff66cc;
-      text-shadow: 0 0 10px #ff66cc;
+      text-shadow: 0 0 15px #ff66cc, 0 0 25px rgba(255, 102, 204, 0.5); /* Sombra mais intensa */
+      font-size: 3em;
+      letter-spacing: 2px;
+    }
+    p {
+      font-size: 1.3em;
+      line-height: 1.6;
+      max-width: 700px;
+      margin: 20px auto;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.2);
     }
     button {
       background-color: #660033;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      font-size: 1.2em;
-      border-radius: 10px;
-      margin: 10px;
+      color: #ffe6f2; /* Cor do texto do botão mais vibrante */
+      border: 2px solid #ff66cc; /* Borda colorida */
+      padding: 12px 25px;
+      font-size: 1.3em;
+      border-radius: 15px; /* Bordas mais arredondadas */
+      margin: 15px;
       cursor: pointer;
+      transition: all 0.3s ease; /* Transição suave para hover */
+      box-shadow: 0 0 10px rgba(255, 102, 204, 0.4);
+    }
+    button:hover {
+      background-color: #ff3399; /* Cor de hover mais clara */
+      transform: translateY(-3px); /* Efeito de leve "pulo" */
+      box-shadow: 0 0 15px rgba(255, 102, 204, 0.7);
     }
     video {
       width: 90%;
       max-width: 800px;
       margin: 20px auto;
       display: none;
+      box-shadow: 0 0 25px rgba(255, 102, 204, 0.6); /* Sombra no vídeo */
+      border-radius: 10px;
+      background-color: #000; /* Fundo preto para o vídeo */
     }
-    .puzzle {
-      margin-top: 20px;
-      display: none;
+    .game-container {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 1s ease-in-out; /* Transição para o container principal */
+    }
+    .hidden {
+      opacity: 0;
+      pointer-events: none; /* Desabilita interações quando invisível */
+    }
+    .choice-buttons button {
+      min-width: 200px; /* Garante que os botões de escolha tenham largura mínima */
+    }
+    .puzzle-input {
+      background-color: #1a0314; /* Fundo do input mais escuro */
+      color: #ffe6f2;
+      border: 1px solid #ff66cc;
+      padding: 10px;
+      font-size: 1.1em;
+      border-radius: 8px;
+      margin-right: 10px;
+      text-align: center;
+    }
+    .final-message {
+      font-size: 1.8em;
+      color: #ff3399;
+      text-shadow: 0 0 10px #ff3399;
+      animation: pulse 1.5s infinite alternate; /* Animação de pulso */
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); opacity: 1; }
+      to { transform: scale(1.05); opacity: 0.9; }
     }
   </style>
 </head>
 <body>
 
-  <h1>🌙 Vale Súcubo 🌙</h1>
-  <p>Você está prestes a entrar em um lugar onde realidade e desejo se confundem...</p>
-  <button onclick="entrar()">Entrar no Vale</button>
+  <div class="game-container" id="gameContainer">
+    <h1>🌙 Vale Súcubo 🌙</h1>
+    <p id="introductionText">Rumores sussurram sobre um lugar além dos mapas, onde os véus entre os mundos são finos e a própria essência do desejo ganha forma. Dizem que poucos que ousam adentrar o Vale Súcubo retornam inalterados, pois ali, a realidade se dobra aos caprichos de uma força primordial, e a linha entre a fantasia mais íntima e o perigo mortal se desfaz. Você sente um chamado, uma curiosidade proibida... está pronto para perder-se na promessa do Vale?</p>
+    <button id="startButton" onclick="startGame()">Entrar no Vale</button>
 
-  <div id="escolhaDificuldade" style="display:none;">
-    <h2>Escolha sua dificuldade</h2>
-    <button onclick="iniciar()">Iniciar Jornada</button>
-  </div>
+    <div id="difficultySelection" style="display:none;">
+      <h2>Escolha sua dificuldade</h2>
+      <button onclick="startJourney()">Iniciar Jornada</button>
+      </div>
 
-  <!-- Vídeos -->
-  <video id="0" controls><source src="teste1.mp4" type="video/mp4"></video>
-  <video id="1" controls><source src="teste2.mp4" type="video/mp4"></video>
-  <video id="2" controls><source src="teste3.mp4" type="video/mp4"></video>
-  <video id="3" controls><source src="teste4.mp4" type="video/mp4"></video>
-  <video id="4" controls><source src="teste5.mp4" type="video/mp4"></video>
-  <video id="5" controls><source src="umbreonhetero.mp4" type="video/mp4"></video>
+    <video id="videoPlayer" controls preload="auto">
+      <source id="videoSource" src="" type="video/mp4">
+      Seu navegador não suporta a tag de vídeo.
+    </video>
 
-  <div class="puzzle" id="puzzle">
-    <p>Digite <strong>"súcubo"</strong> para continuar:</p>
-    <input type="text" id="resposta" />
-    <button onclick="verificar()">Verificar</button>
+    <p id="videoDescription" style="display:none;"></p>
+
+    <div class="puzzle" id="puzzleSection" style="display:none;">
+      <p id="puzzleText">O sussurro da súcubo ecoa, exigindo um reconhecimento. Digite a palavra que a invoca:</p>
+      <input type="text" id="answerInput" class="puzzle-input" placeholder="Sua resposta aqui..." />
+      <button onclick="checkAnswer()">Confirmar</button>
+    </div>
+
+    <div class="choice-buttons" id="choiceSection" style="display:none;">
+      </div>
+
+    <p id="finalMessage" class="final-message" style="display:none;"></p>
   </div>
 
   <script>
-    let indice = 0;
-    const videos = ["teste1.mp4", "teste2.mp4", "teste3.mp4", "teste4.mp4", "teste5.mp4", "umbreonhetero.mp4"];
-    const historias = {
-      "teste1.mp4": "Atravessando o véu do ordinário, você se depara com uma floresta envolta em névoa rosada. O ar é doce, denso, e cada passo ecoa como se o próprio Vale sussurrasse ao seu ouvido. O chão pulsa levemente sob seus pés — como se o mundo estivesse vivo, respirando e esperando...",
-      "teste2.mp4": "Você caminha entre árvores retorcidas que sussurram seu nome. À frente, uma figura envolta em sombras e luz se revela. Ela não fala, mas seus olhos falam de desejo, dor e promessas. Você sente algo profundo se agitar dentro de si, como se a própria realidade estivesse se moldando ao seu íntimo.",
-      "teste3.mp4": "A figura começa a dançar em meio às sombras, desafiando sua sanidade. Cada movimento parece arrancar de você memórias escondidas — lembranças que você jurava ter enterrado. Ela se aproxima, e por um instante, você sente como se estivesse olhando para o reflexo da sua alma.",
-      "teste4.mp4": "As ilusões começam a ruir. Você percebe que não está sozinho. Outras presenças... outras vítimas? Ou cúmplices? O tempo se dobra, e a figura agora fala em enigmas. Você precisa resistir ou ceder ao jogo. Seu coração acelera — não por medo, mas por algo mais profundo e primal.",
-      "teste5.mp4": "Um aviso ecoa no ar: 'O próximo passo é irreversível'. A atmosfera pesa. A súcubo começa a se revelar em sua forma completa — não mais ilusão, mas essência pura. Ela não quer apenas sua atenção. Ela quer o que há de mais íntimo em você: seu desejo, sua verdade e sua entrega.",
-      "umbreonhetero.mp4": "🔥 CHEFÃO FINAL 🔥 — A batalha não é de armas, mas de vontades. Você está frente a frente com o ser que alimenta as fantasias do Vale. Ela te provoca, desafia, testa seus limites. Cada segundo do vídeo é um convite — a pergunta final ecoa: você vai resistir... ou se render?"
-    };
+    let currentVideoIndex = 0;
+    const gameContainer = document.getElementById('gameContainer');
+    const startButton = document.getElementById('startButton');
+    const difficultySelection = document.getElementById('difficultySelection');
+    const videoPlayer = document.getElementById('videoPlayer');
+    const videoSource = document.getElementById('videoSource');
+    const videoDescription = document.getElementById('videoDescription');
+    const puzzleSection = document.getElementById('puzzleSection');
+    const puzzleText = document.getElementById('puzzleText');
+    const answerInput = document.getElementById('answerInput');
+    const choiceSection = document.getElementById('choiceSection');
+    const finalMessage = document.getElementById('finalMessage');
+    const introductionText = document.getElementById('introductionText');
 
-    function entrar() {
-      document.querySelector("button").style.display = "none";
-      document.getElementById("escolhaDificuldade").style.display = "block";
+    // Mapeamento de vídeos e descrições aprimoradas
+    const scenes = [
+      {
+        video: "teste1.mp4",
+        description: "Atravessando o véu do ordinário, você se depara com uma floresta envolta em uma névoa rosada, doce e quase sufocante de jasmim e desespero. Cada passo na trilha macia é acompanhado por um sussurro que parece conhecer seus segredos mais profundos, e a própria terra pulsa sob seus pés, como um coração adormecido prestes a despertar. Você sente a atração do desconhecido... vai [Avançar Cautelosamente] ou [Tentar Observar o Entorno]?",
+        choices: [
+          { text: "Avançar Cautelosamente", nextIndex: 1 },
+          { text: "Tentar Observar o Entorno", nextIndex: 1, textOverride: "Você tenta discernir formas na névoa, mas ela se adensa, guiando-o inexoravelmente para a frente." }
+        ]
+      },
+      {
+        video: "teste2.mp4",
+        description: "Você caminha entre árvores retorcidas que sussurram seu nome, uma melodia hipnótica. À frente, uma figura enigmática surge, envolta em sombras e luz cintilante. Ela não pronuncia uma palavra, mas seus olhos, poços sem fundo de uma beleza perturbadora, transbordam com um misto de promessa proibida e uma dor ancestral. Há algo neles que te chama, uma ressonância com os desejos que você manteve ocultos, até de si mesmo. Você vai [Se Aproximar da Figura] ou [Manter Distância]?",
+        choices: [
+          { text: "Se Aproximar da Figura", nextIndex: 2 },
+          { text: "Manter Distância", nextIndex: 2, textOverride: "Uma força invisível parece puxá-lo. Não há como resistir ao chamado. Você se aproxima." }
+        ]
+      },
+      {
+        video: "teste3.mp4",
+        description: "A figura começa a dançar em meio às sombras, um balé hipnótico que desafia sua sanidade. Cada movimento parece arrancar de você memórias escondidas — lembranças que você jurava ter enterrado para sempre. Ela se aproxima ainda mais, e por um instante, você sente como se estivesse olhando para o reflexo da sua alma, para seus próprios anseios mais profundos. O ar se torna denso com uma tensão quase palpável. Você vai [Ceder à Hipnose] ou [Tentar Focar na Realidade]?",
+        choices: [
+          { text: "Ceder à Hipnose", nextIndex: 3 },
+          { text: "Tentar Focar na Realidade", nextIndex: 3, textOverride: "Ainda que tente resistir, a dança da súcubo te puxa para mais perto da ilusão, as memórias voltando com força total." }
+        ]
+      },
+      {
+        video: "teste4.mp4",
+        description: "As ilusões começam a ruir, revelando mais do Vale. Você percebe que não está sozinho. Outras presenças se arrastam nas sombras, almas perdidas, ou talvez cúmplices da súcubo? O tempo se dobra, e a figura agora fala, não com palavras, mas com enigmas que ecoam em sua mente, testando sua vontade. 'A tentação é a chave, mas qual porta ela abre?', sussurra uma voz sem corpo. Você precisa resistir ou ceder ao jogo. Seu coração acelera, não por medo, mas por algo mais profundo e primal. Para prosseguir, desvende o enigma. Qual a palavra para a essência que busca, a tentadora que se revela no Vale?",
+        isPuzzle: true,
+        puzzleAnswer: "súcubo",
+        nextIndex: 4,
+        wrongAnswerText: "A súcubo sorri, um arrepio percorre sua espinha. 'Ainda não, mortal. Você deve desejar mais para me nomear.'",
+        correctAnswerText: "A palavra 'súcubo' ressoa no ar, as sombras se dissipam por um instante, revelando um vislumbre da verdadeira forma da figura. Você avançou."
+      },
+      {
+        video: "teste5.mp4",
+        description: "Um aviso ecoa no ar, não de uma voz, mas de uma sensação avassaladora: 'O próximo passo é irreversível. O que você busca está além da razão.' A atmosfera pesa, e a súcubo começa a se revelar em sua forma mais completa – não mais uma ilusão sutil, mas a essência pura do desejo e da tentação. Ela não quer apenas sua atenção. Ela quer o que há de mais íntimo em você: seu desejo, sua verdade, e sua entrega total. A encruzilhada está diante de você. Você sente uma força inegável te puxando. Você vai [Aceitar o Chamado do Desejo] ou [Tentar Desafiar a Súcubo]?",
+        choices: [
+          { text: "Aceitar o Chamado do Desejo", nextIndex: 5, ending: "surrender" },
+          { text: "Tentar Desafiar a Súcubo", nextIndex: 5, ending: "resist" }
+        ]
+      },
+      {
+        video: "umbreonhetero.mp4",
+        description: "🔥 **CONFRONTO FINAL** 🔥 — A batalha não é de armas, mas de vontades e das profundezas da sua alma. Você está frente a frente com o ser que alimenta as fantasias mais secretas do Vale, a própria manifestação do desejo. Ela te provoca, desafia cada fibra da sua existência, testa seus limites. Cada segundo é um convite irresistível, uma pergunta final que ecoa em seu ser: você vai [Se Render ao Desejo Profundo] ou [Lutar Pela Sua Alma]?",
+        choices: [
+          { text: "Se Render ao Desejo Profundo", ending: "surrender_final" },
+          { text: "Lutar Pela Sua Alma", ending: "resist_final" }
+        ]
+      }
+    ];
+
+    function hideAllSections() {
+      startButton.style.display = 'none';
+      difficultySelection.style.display = 'none';
+      videoPlayer.style.display = 'none';
+      videoDescription.style.display = 'none';
+      puzzleSection.style.display = 'none';
+      choiceSection.style.display = 'none';
+      finalMessage.style.display = 'none';
+      introductionText.style.display = 'none';
     }
 
-    function iniciar() {
-      indice = 0;
-      document.getElementById("escolhaDificuldade").style.display = "none";
-      tocarVideo();
+    function startGame() {
+      hideAllSections();
+      introductionText.style.display = 'block';
+      difficultySelection.style.display = 'block';
     }
 
-    function tocarVideo() {
-      if (indice >= videos.length) {
-        alert("Você concluiu a jornada no Vale Súcubo. Sua alma ainda pertence a você... por enquanto.");
+    function startJourney() {
+      hideAllSections();
+      playScene(currentVideoIndex);
+    }
+
+    function playScene(index) {
+      if (index >= scenes.length) {
+        endGame("Você concluiu a jornada no Vale Súcubo. Sua alma ainda pertence a você... por enquanto. Mas as marcas do desejo permanecerão.");
         return;
       }
 
-      let nomeArquivo = videos[indice];
-      let video = document.getElementById(indice.toString());
+      currentVideoIndex = index;
+      const scene = scenes[currentVideoIndex];
 
-      document.querySelectorAll("video").forEach(v => v.style.display = "none");
-      document.getElementById("puzzle").style.display = "none";
+      hideAllSections(); // Esconde tudo antes de mostrar a nova cena
 
-      alert(historias[nomeArquivo] || "Você continua avançando...");
+      videoDescription.innerText = scene.description;
+      videoDescription.style.display = 'block';
 
-      video.style.display = "block";
-      video.play();
-      video.onended = () => {
-        document.getElementById("puzzle").style.display = "block";
+      videoSource.src = scene.video;
+      videoPlayer.load(); // Recarrega o vídeo
+      videoPlayer.style.display = 'block';
+      videoPlayer.play();
+
+      videoPlayer.onended = () => {
+        if (scene.isPuzzle) {
+          puzzleSection.style.display = 'block';
+          puzzleText.innerText = scene.description; // Usa a descrição como texto do puzzle
+          answerInput.value = '';
+          answerInput.focus();
+        } else if (scene.choices) {
+          displayChoices(scene.choices);
+        } else {
+          // Fallback para cenas sem puzzle ou escolhas explícitas, avança automaticamente
+          currentVideoIndex++;
+          playScene(currentVideoIndex);
+        }
       };
     }
 
-    function verificar() {
-      const input = document.getElementById("resposta").value.trim().toLowerCase();
-      if (input === "súcubo") {
-        indice++;
-        document.getElementById("resposta").value = "";
-        tocarVideo();
+    function checkAnswer() {
+      const scene = scenes[currentVideoIndex];
+      const input = answerInput.value.trim().toLowerCase();
+
+      if (input === scene.puzzleAnswer) {
+        alert(scene.correctAnswerText || "Resposta correta! Você avança mais fundo no Vale.");
+        currentVideoIndex++;
+        playScene(currentVideoIndex);
       } else {
-        alert("Resposta incorreta. A súcubo sorri... e espera mais.");
+        alert(scene.wrongAnswerText || "Resposta incorreta. A súcubo sorri... e espera mais.");
+        // Opcional: Reiniciar o vídeo ou uma punição leve
       }
     }
+
+    function displayChoices(choices) {
+      choiceSection.innerHTML = ''; // Limpa botões anteriores
+      choiceSection.style.display = 'block';
+
+      choices.forEach(choice => {
+        const button = document.createElement('button');
+        button.innerText = choice.text;
+        button.onclick = () => handleChoice(choice);
+        choiceSection.appendChild(button);
+      });
+    }
+
+    function handleChoice(choice) {
+      hideAllSections();
+      if (choice.ending) {
+        // Trata finais específicos
+        if (choice.ending === "surrender_final") {
+          endGame("Você se rende ao desejo avassalador da súcubo. Seu ser se funde com a essência do Vale, e você se torna parte da sua beleza e sua maldição. Não há mais retorno. Você é um com o desejo.");
+        } else if (choice.ending === "resist_final") {
+          endGame("Com uma força que você não sabia que possuía, você luta contra a súcubo, resistindo à sua influência. Ela se retira, não derrotada, mas talvez intrigada. Você escapa do Vale, mas a experiência o transformou para sempre. O desejo, agora, tem um novo significado.");
+        } else if (choice.ending === "surrender") {
+            endGame("Você aceita o chamado do desejo, permitindo que a súcubo o envolva por completo. O Vale o consome, e você se torna um eco de paixões esquecidas. Seu destino está selado.");
+        } else if (choice.ending === "resist") {
+            endGame("Você tenta desafiar a súcubo, sentindo sua vontade testada ao limite. Você consegue recuar, mas a marca do Vale permanece em sua alma, uma promessa tentadora para o futuro.");
+        }
+
+      } else if (choice.nextIndex !== undefined) {
+        // Se houver texto de override, exibe antes de avançar
+        if (choice.textOverride) {
+            videoDescription.innerText = choice.textOverride;
+            videoDescription.style.display = 'block';
+            setTimeout(() => { // Dá um tempo para o usuário ler o override antes de avançar
+                playScene(choice.nextIndex);
+            }, 2000); // Exibe por 2 segundos antes de mudar
+        } else {
+            playScene(choice.nextIndex);
+        }
+      }
+    }
+
+    function endGame(message) {
+      hideAllSections();
+      finalMessage.innerText = message;
+      finalMessage.style.display = 'block';
+      // Poderia adicionar um botão de "Jogar Novamente" aqui
+      const restartButton = document.createElement('button');
+      restartButton.innerText = "Jogar Novamente";
+      restartButton.onclick = () => location.reload(); // Recarrega a página para reiniciar
+      finalMessage.appendChild(restartButton);
+    }
+
+    // Inicializa o jogo ao carregar a página, mostrando apenas o botão de início
+    document.addEventListener('DOMContentLoaded', () => {
+      hideAllSections();
+      startButton.style.display = 'block';
+      introductionText.style.display = 'block';
+    });
   </script>
 
 </body>
